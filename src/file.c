@@ -136,6 +136,7 @@ void solve_pal(FILE *fpal, FILE *fpath, Graph **graphs)
 	int *dist = NULL; /* Tabela de dipathâncias à origem. */
 	int d;
 
+	/* TODO: Lift this while out or lift the body to another function */
 	while (fscanf(fpal, "%s %s %hu", word1, word2, &max_perm) == 3) {
 		/* Se as duas palavras do .pal diferirem de 1 ou 0 carateres,
 		 * a solução é trivial. */
@@ -186,12 +187,12 @@ void solve_pal(FILE *fpal, FILE *fpath, Graph **graphs)
  */
 void fprint_path(FILE *fpath, Graph *g, int *path, int *dist, int dst)
 {
-	/* Enquanto ainda não estamos no fim do caminho... */
-	if (path[dst] != -1) {
-		/* ... Chamar recursivamente, com dst = antecessor de dst. */
-		fprint_path(fpath, g, path, dist, path[dst]);
-		/* Finalmente, quando chegamos ao fim, imprimir os vários
-		 * vértices do caminho. */
-		fprintf(fpath, "%s\n", (char *) v_get_item(g_get_vertex(g, dst)));
-	}
+	if (path[dst] == -1) return;
+
+	/* Enquanto ainda não estamos no fim do caminho chamar recursivamente, com
+	 * dst = antecessor de dst. */
+	fprint_path(fpath, g, path, dist, path[dst]);
+	/* Finalmente, quando chegamos ao fim, imprimir os vários vértices do
+	 * caminho. */
+	fprintf(fpath, "%s\n", (char *) v_get_item(g_get_vertex(g, dst)));
 }
