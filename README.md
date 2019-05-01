@@ -1,6 +1,10 @@
 # Wordmorph
 Word path finding utility
 
+# How?
+Djikstra (using binary heap), on an adjacency list weighted graph of words (the 
+edge weights are the hamming distance between each word).
+
 ## Instructions:
 ```
 git clone https://github.com/joajfreitas/wordmorph && cd wordmorph
