@@ -17,7 +17,7 @@
 #include "heap.h"
 
 /**
- * @brief Vertice de um grafo
+ * @brief Vértice de um grafo
  * @details Cada vértice contém um tipo abstracto e um ponteiro para
  *	a cabeça da sua lista de adjacências.
  */
@@ -29,7 +29,7 @@ struct _Vertex {
 /**
  * @brief Aresta ponderada.
  * @details As arestas contêm o peso da ligação, o índice de destino e um
- *	ponteiro para a proxima aresta ajacente do vértice, i.e., uma lista
+ *	ponteiro para a próxima aresta adjacente do vértice, i.e., uma lista
  *	de adjacências.
  *
  */
@@ -41,14 +41,14 @@ struct _Edge {
 
 /**
  * @brief Grafo
- * @details vertices: array de vértices
- *	size: número máximo de vertices que o grafo pode conter
+ * @details vértices: array de vértices
+ *	size: número máximo de vértices que o grafo pode conter
  *	free: número de vértices que o grafo contém (posição livre)
  *	max_weight: peso máximo das arestas do grafo
  *
  */
 struct _Graph {
-	Vertex **vertices;
+	Vertex **vértices;
 	unsigned short size;
 	unsigned short free;
 	unsigned short max_weight;
@@ -65,7 +65,7 @@ struct _Graph {
 Graph *g_init(unsigned short size, unsigned short max_weight)
 {
 	Graph *g = (Graph *) emalloc(sizeof(Graph));
-	g->vertices = (Vertex **) emalloc(sizeof(Vertex *) * size);
+	g->vértices = (Vertex **) emalloc(sizeof(Vertex *) * size);
 	g->free = 0;
 	g->size = size;
 	g->max_weight = max_weight;
@@ -84,13 +84,13 @@ void g_free(Graph *g, void (free_item)(Item item))
 	Vertex *aux;
 
 	for (i = 0; i < g->size; i++) {
-		aux = g->vertices[i];
+		aux = g->vértices[i];
 		free_adj(aux->adj);
 		free_item(aux->item);
 		free(aux);
 	}
 
-	free(g->vertices);
+	free(g->vértices);
 	free(g);
 }
 
@@ -106,13 +106,13 @@ void g_insert(Graph *g, Item i)
 
 	new_vertex = v_init(i);
 	/* g->free é a posição livre no grafo. */
-	g->vertices[g->free] = new_vertex;
+	g->vértices[g->free] = new_vertex;
 	g->free++;
 }
 
 /**
- * @brief Cria ligações entre vertices.
- * @details Verifica quais os vertices cujo peso é menor que o máximo permitido
+ * @brief Cria ligações entre vértices.
+ * @details Verifica quais os vértices cujo peso é menor que o máximo permitido
  * e insere as ligações correspondentes na lista de adjacências.
  *
  * @param g Ponteiro para grafo.
@@ -125,7 +125,7 @@ void g_make_edges(Graph *g, unsigned short (*calc_weight)(Item i1, Item i2, unsi
 
 	for (i = 0; i < g->size; i++) {
 		for (j = 0; j < i; j++) {
-			weight = calc_weight(g->vertices[i]->item, g->vertices[j]->item, g->max_weight);
+			weight = calc_weight(g->vértices[i]->item, g->vértices[j]->item, g->max_weight);
 			if (weight <= g->max_weight) {
 				/* Agora o peso entra quadraticamente. */
 				e_add(g, i, j, weight*weight);
@@ -136,10 +136,10 @@ void g_make_edges(Graph *g, unsigned short (*calc_weight)(Item i1, Item i2, unsi
 }
 
 /**
- * @brief Função acessora do numero máximo de vertices no grafo.
+ * @brief Função assessora do numero máximo de vértices no grafo.
  *
  * @param g Ponteiro para grafo.
- * @return Numero máximo de vertices no grafo.
+ * @return Numero máximo de vértices no grafo.
  */
 unsigned short g_get_size(Graph *g)
 {
@@ -147,10 +147,10 @@ unsigned short g_get_size(Graph *g)
 }
 
 /**
- * @brief Função acessora do numero de vertices no grafo.
+ * @brief Função assessora do numero de vértices no grafo.
  *
  * @param g Ponteiro para grafo.
- * @return Numero de vertices no grafo.
+ * @return Numero de vértices no grafo.
  */
 unsigned short g_get_free(Graph *g)
 {
@@ -158,7 +158,7 @@ unsigned short g_get_free(Graph *g)
 }
 
 /**
- * @brief Função acessora do peso máximo das arestas no grafo.
+ * @brief Função assessora do peso máximo das arestas no grafo.
  *
  * @param g Ponteiro para grafo
  * @return Peso máximo entre arestas no grafo.
@@ -169,33 +169,33 @@ unsigned short g_get_max_weight(Graph *g)
 }
 
 /**
- * @brief Função acessora de um vertice i do grafo.
+ * @brief Função assessora de um vértice i do grafo.
  *
  * @param g Ponteiro para grafo.
- * @param i Índice do vertice.
+ * @param i Índice do vértice.
  *
- * @return Vertice i do grafo.
+ * @return Vértice i do grafo.
  */
 Vertex *g_get_vertex(Graph *g, unsigned short i)
 {
-	return g->vertices[i];
+	return g->vértices[i];
 }
 
 /**
- * @brief Encontra vertice no grafo.
- * @details Procura um vertice no grafo linearmente.
+ * @brief Encontra vértice no grafo.
+ * @details Procura um vértice no grafo linearmente.
  *
  * @param g Ponteiro para grafo.
- * @param i1 Item que indentifica o vertice a encontrar
- * @param cmp_item Ponteiro para função comparadora de vertices.
- * @return Indice do vertice encontrado ou -1 em caso de insucesso.
+ * @param i1 Item que identifica o vértice a encontrar
+ * @param cmp_item Ponteiro para função comparadora de vértices.
+ * @return Índice do vértice encontrado ou -1 em caso de insucesso.
  */
 int g_find_vertex(Graph *g, Item i1, int (*cmp_item)(Item c1, Item c2))
 {
 	int i;
 
 	for (i = 0; i < g_get_size(g); i++)
-		if (!cmp_item(g->vertices[i]->item, i1))
+		if (!cmp_item(g->vértices[i]->item, i1))
 			return i;
 
 	return -1;
@@ -203,10 +203,10 @@ int g_find_vertex(Graph *g, Item i1, int (*cmp_item)(Item c1, Item c2))
 
 
 /**
- * @brief Inicializar um vertice com item i.
+ * @brief Inicializar um vértice com item i.
  *
- * @param i Item a inserir no vertice.
- * @return Ponteiro para o novo vertice.
+ * @param i Item a inserir no vértice.
+ * @return Ponteiro para o novo vértice.
  */
 Vertex *v_init(Item i)
 {
@@ -218,10 +218,10 @@ Vertex *v_init(Item i)
 }
 
 /**
- * @brief Função acessora de items no vertice
+ * @brief Função assessora de items no vértice
  *
- * @param v Ponteiro para vertice
- * @return Item do vertice.
+ * @param v Ponteiro para vértice
+ * @return Item do vértice.
  */
 Item v_get_item(Vertex *v)
 {
@@ -229,9 +229,9 @@ Item v_get_item(Vertex *v)
 }
 
 /**
- * @brief Função acessora de listas de adjacências.
+ * @brief Função assessora de listas de adjacências.
  *
- * @param v Ponteiro para vertice.
+ * @param v Ponteiro para vértice.
  * @return Lista de adjacências.
  */
 Edge *v_get_adj(Vertex *v)
@@ -243,7 +243,7 @@ Edge *v_get_adj(Vertex *v)
  * @brief Inserir edge na lista de adjacências.
  *
  * @param adj Lista de adjacências.
- * @param index Indice do vertice de destino.
+ * @param index Índice do vértice de destino.
  * @param weight Peso da aresta.
  */
 void e_insert(Edge **adj, unsigned short index, unsigned short weight)
@@ -258,22 +258,22 @@ void e_insert(Edge **adj, unsigned short index, unsigned short weight)
 }
 
 /**
- * @brief Cria arestas entre vertices.
- * @details Insere uma aresta em cada vertice da ligação.
+ * @brief Cria arestas entre vértices.
+ * @details Insere uma aresta em cada vértice da ligação.
  *
  * @param g Ponteiro para grafo.
- * @param i1 Indice do vertice de partida.
- * @param i2 Indice do verticd de destino.
+ * @param i1 Índice do vértice de partida.
+ * @param i2 Índice do vértice de destino.
  * @param weight Peso da aresta.
  */
 void e_add(Graph *g, unsigned short i1, unsigned short i2, unsigned short weight)
 {
-	e_insert(&(g->vertices[i1]->adj), i2, weight);
-	e_insert(&(g->vertices[i2]->adj), i1, weight);
+	e_insert(&(g->vértices[i1]->adj), i2, weight);
+	e_insert(&(g->vértices[i2]->adj), i1, weight);
 }
 
 /**
- * @brief Função acessora do peso da aresta.
+ * @brief Função assessora do peso da aresta.
  *
  * @param e Ponteiro para edge.
  * @return Peso da aresta
@@ -284,10 +284,10 @@ unsigned short e_get_weight(Edge *e)
 }
 
 /**
- * @brief Função acessora do indice do vertice de destino da aresta.
+ * @brief Função assessora do índice do vértice de destino da aresta.
  *
  * @param e Ponteiro para aresta.
- * @return Indice do vertice de destino da aresta.
+ * @return Índice do vértice de destino da aresta.
  */
 unsigned short e_get_index(Edge *e)
 {
@@ -295,10 +295,10 @@ unsigned short e_get_index(Edge *e)
 }
 
 /**
- * @brief Função acessora do proximo elemento da lista de adjacências
+ * @brief Função assessora do próximo elemento da lista de adjacências
  *
  * @param l Ponteiro para aresta
- * @return Proximo elemento da lista de adjacências
+ * @return Próximo elemento da lista de adjacências
  */
 Edge *e_get_next(Edge *l)
 {
